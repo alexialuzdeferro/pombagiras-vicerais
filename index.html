@@ -41,7 +41,6 @@
             position: relative;
         }
 
-        /* Animated Background */
         .bg-animation {
             position: fixed;
             top: 0;
@@ -94,7 +93,6 @@
             }
         }
 
-        /* Header */
         .header {
             text-align: center;
             padding: 60px 20px 40px;
@@ -160,7 +158,6 @@
             text-transform: uppercase;
         }
 
-        /* Discrete Visitor Counter - Fixed Bottom Right */
         .visitor-counter {
             position: fixed;
             bottom: 20px;
@@ -209,7 +206,6 @@
             letter-spacing: 1px;
         }
 
-        /* Section Titles */
         .section-title {
             font-family: 'Cinzel Decorative', cursive;
             font-size: clamp(1.5rem, 6vw, 2.2rem);
@@ -232,7 +228,6 @@
             background: linear-gradient(90deg, transparent, var(--primary), transparent);
         }
 
-        /* Impact Phrases */
         .phrases-section {
             padding: 40px 20px;
         }
@@ -290,16 +285,12 @@
             margin-top: 15px;
         }
 
-        /* Videos Section */
         .videos-section {
             padding: 40px 15px;
         }
 
-        .videos-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 25px;
-            max-width: 800px;
+        .video-container {
+            max-width: 700px;
             margin: 0 auto;
         }
 
@@ -351,7 +342,6 @@
             letter-spacing: 2px;
         }
 
-        /* Testimonials */
         .testimonials-section {
             padding: 40px 20px;
         }
@@ -429,7 +419,6 @@
             letter-spacing: 3px;
         }
 
-        /* Links Grid */
         .links-section {
             padding: 40px 15px;
         }
@@ -508,7 +497,6 @@
             line-height: 1.4;
         }
 
-        /* Special Link */
         .special-link-section {
             padding: 50px 20px;
             text-align: center;
@@ -579,7 +567,6 @@
             letter-spacing: 2px;
         }
 
-        /* Footer */
         .footer {
             text-align: center;
             padding: 50px 20px 100px;
@@ -612,7 +599,6 @@
             color: var(--gold);
         }
 
-        /* Scroll to top */
         .scroll-top {
             position: fixed;
             bottom: 80px;
@@ -646,14 +632,9 @@
             background: rgba(139, 0, 0, 0.8);
         }
 
-        /* Responsive */
         @media (min-width: 600px) {
             .links-grid {
                 grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .videos-grid {
-                grid-template-columns: repeat(2, 1fr);
             }
             
             .testimonials-grid {
@@ -667,7 +648,6 @@
             }
         }
 
-        /* Loading Animation */
         .loader {
             position: fixed;
             top: 0;
@@ -754,44 +734,22 @@
         </div>
     </section>
 
-    <!-- Videos Section -->
+    <!-- Video Section - APENAS 1 VÍDEO -->
     <section class="videos-section">
         <h2 class="section-title">
-            <span>Visões Sagradas</span>
+            <span>Visão Sagrada</span>
         </h2>
-        <div class="videos-grid">
-            <div class="video-card">
-                <div class="video-wrapper">
-                    <iframe 
-                        src="https://www.youtube.com/embed/Jg4JTEVLol0" 
-                        title="Vídeo Sagrado 1" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen>
-                    </iframe>
-                </div>
-                <div class="video-label">✦ Mistério I ✦</div>
-            </div>
+        <div class="video-container">
             <div class="video-card">
                 <div class="video-wrapper">
                     <iframe 
                         src="https://www.youtube.com/embed/mltVOfrrO1A" 
-                        title="Vídeo Sagrado 2" 
+                        title="Vídeo Sagrado" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                         allowfullscreen>
                     </iframe>
                 </div>
-                <div class="video-label">✦ Mistério II ✦</div>
-            </div>
-            <div class="video-card">
-                <div class="video-wrapper">
-                    <iframe 
-                        src="https://www.youtube.com/embed/G-_i2aIDih4" 
-                        title="Vídeo Sagrado 3" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen>
-                    </iframe>
-                </div>
-                <div class="video-label">✦ Mistério III ✦</div>
+                <div class="video-label">✦ Mistério Sagrado ✦</div>
             </div>
         </div>
     </section>
@@ -993,12 +951,12 @@
     </button>
 
     <script>
-        // Configuration
+        // ========== CONFIGURAÇÃO ==========
         const CONFIG = {
             SUPABASE_URL: 'https://rbygxkbewzknvjjhxdvw.supabase.co',
             SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJieWd4a2Jld3prbnZqamh4ZHZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMDcxNjQsImV4cCI6MjA4MTU4MzE2NH0.YrHF9HEGo6yv9MyNsPzFgBhaAB1DRh2SLU8f7L6s1nY',
-            PAGE_NAME: 'pombagiras-app',
-            SESSION_KEY: 'pombagiras_session_2024'
+            PAGE_NAME: 'pombagiras',
+            SESSION_KEY: 'pombagiras_visited_2024'
         };
 
         // Loader
@@ -1039,105 +997,84 @@
             }
         });
 
-        // ========== SUPABASE COUNTER - FIXED VERSION ==========
+        // ========== CONTADOR USANDO RPC - CORRIGIDO ==========
         async function initializeCounter() {
             const viewCountElement = document.getElementById('visitorCount');
             
             try {
-                // Check if user already visited in this session
                 const hasViewed = sessionStorage.getItem(CONFIG.SESSION_KEY);
-                
-                // First, try to get current count
-                const getResponse = await fetch(
-                    `${CONFIG.SUPABASE_URL}/rest/v1/page_views?page=eq.${encodeURIComponent(CONFIG.PAGE_NAME)}&select=id,view_count`,
-                    {
-                        method: 'GET',
-                        headers: {
-                            'apikey': CONFIG.SUPABASE_KEY,
-                            'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
-                            'Content-Type': 'application/json'
-                        }
-                    }
-                );
+                let finalCount = 0;
 
-                let currentCount = 0;
-                let recordExists = false;
-                let recordId = null;
-
-                if (getResponse.ok) {
-                    const data = await getResponse.json();
-                    if (data && data.length > 0) {
-                        currentCount = data[0].view_count || 0;
-                        recordId = data[0].id;
-                        recordExists = true;
-                    }
-                }
-
-                // If this is a new session visit, increment the counter
                 if (!hasViewed) {
-                    const newCount = currentCount + 1;
-                    
-                    if (recordExists && recordId) {
-                        // Update existing record
-                        const updateResponse = await fetch(
-                            `${CONFIG.SUPABASE_URL}/rest/v1/page_views?id=eq.${recordId}`,
-                            {
-                                method: 'PATCH',
-                                headers: {
-                                    'apikey': CONFIG.SUPABASE_KEY,
-                                    'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
-                                    'Content-Type': 'application/json',
-                                    'Prefer': 'return=representation'
-                                },
-                                body: JSON.stringify({
-                                    view_count: newCount,
-                                    updated_at: new Date().toISOString()
-                                })
-                            }
-                        );
-                        
-                        if (updateResponse.ok) {
-                            currentCount = newCount;
-                            sessionStorage.setItem(CONFIG.SESSION_KEY, 'true');
+                    // Chamar a função RPC para incrementar
+                    const rpcResponse = await fetch(
+                        `${CONFIG.SUPABASE_URL}/rest/v1/rpc/increment_page_view`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'apikey': CONFIG.SUPABASE_KEY,
+                                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
+                            },
+                            body: JSON.stringify({
+                                target_page: CONFIG.PAGE_NAME
+                            })
                         }
+                    );
+
+                    if (rpcResponse.ok) {
+                        const result = await rpcResponse.json();
+                        finalCount = result;
+                        sessionStorage.setItem(CONFIG.SESSION_KEY, 'true');
+                        console.log('✅ Visita contabilizada! Total:', finalCount);
                     } else {
-                        // Create new record
-                        const insertResponse = await fetch(
-                            `${CONFIG.SUPABASE_URL}/rest/v1/page_views`,
-                            {
-                                method: 'POST',
-                                headers: {
-                                    'apikey': CONFIG.SUPABASE_KEY,
-                                    'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
-                                    'Content-Type': 'application/json',
-                                    'Prefer': 'return=representation'
-                                },
-                                body: JSON.stringify({
-                                    page: CONFIG.PAGE_NAME,
-                                    view_count: 1,
-                                    updated_at: new Date().toISOString()
-                                })
-                            }
-                        );
-                        
-                        if (insertResponse.ok) {
-                            currentCount = 1;
-                            sessionStorage.setItem(CONFIG.SESSION_KEY, 'true');
-                        }
+                        const errorText = await rpcResponse.text();
+                        console.log('RPC Error:', errorText);
+                        // Fallback: buscar contagem atual
+                        finalCount = await getCurrentCount();
                     }
+                } else {
+                    // Já visitou nesta sessão, apenas buscar contagem
+                    finalCount = await getCurrentCount();
                 }
 
-                // Display the count with animation
-                if (currentCount > 0) {
-                    animateCounter(viewCountElement, currentCount);
+                // Exibir o contador
+                if (finalCount > 0) {
+                    animateCounter(viewCountElement, finalCount);
                 } else {
                     viewCountElement.textContent = '1';
                 }
 
             } catch (error) {
-                console.log('Counter info:', error.message);
+                console.log('Counter error:', error);
                 viewCountElement.textContent = '∞';
             }
+        }
+
+        // Função para buscar contagem atual
+        async function getCurrentCount() {
+            try {
+                const response = await fetch(
+                    `${CONFIG.SUPABASE_URL}/rest/v1/page_views?page=eq.${encodeURIComponent(CONFIG.PAGE_NAME)}&select=view_count`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'apikey': CONFIG.SUPABASE_KEY,
+                            'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
+                        }
+                    }
+                );
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.length > 0) {
+                        return data[0].view_count || 0;
+                    }
+                }
+            } catch (e) {
+                console.log('Get count error:', e);
+            }
+            return 0;
         }
 
         function animateCounter(element, targetNumber) {
@@ -1166,12 +1103,12 @@
             return num.toLocaleString('pt-BR');
         }
 
-        // Initialize counter when DOM is ready
+        // Inicializar após DOM carregado
         document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(initializeCounter, 500);
+            setTimeout(initializeCounter, 800);
         });
 
-        // Intersection Observer for animations
+        // Intersection Observer para animações
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
@@ -1193,7 +1130,7 @@
             observer.observe(el);
         });
 
-        // Touch feedback for mobile
+        // Touch feedback
         document.querySelectorAll('.link-card, .special-link').forEach(card => {
             card.addEventListener('touchstart', function() {
                 this.style.transform = 'scale(0.95)';
@@ -1203,9 +1140,7 @@
             });
         });
 
-        // Console easter egg
-        console.log('%c🌹 Laroyê, Pombagira! 🌹', 'color: #FFD700; font-size: 24px; font-weight: bold; text-shadow: 2px 2px #DC143C;');
-        console.log('%cQue os caminhos estejam sempre abertos para você.', 'color: #DC143C; font-size: 14px;');
+        console.log('%c🌹 Laroyê, Pombagira! 🌹', 'color: #FFD700; font-size: 24px; font-weight: bold;');
     </script>
 </body>
 </html>
