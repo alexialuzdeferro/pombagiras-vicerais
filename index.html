@@ -160,48 +160,53 @@
             text-transform: uppercase;
         }
 
-        /* Visitor Counter */
+        /* Discrete Visitor Counter - Fixed Bottom Right */
         .visitor-counter {
-            background: linear-gradient(135deg, rgba(139, 0, 0, 0.3), rgba(74, 14, 46, 0.4));
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: 20px;
-            padding: 20px 30px;
-            margin: 30px auto;
-            max-width: 300px;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(220, 20, 60, 0.1);
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 30px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 90;
+            opacity: 0.6;
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
-        .counter-label {
-            font-family: 'Cinzel Decorative', cursive;
-            font-size: 0.9rem;
-            color: var(--gold);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }
-
-        .counter-number {
-            font-family: 'Cinzel Decorative', cursive;
-            font-size: 2.5rem;
-            font-weight: 900;
-            background: linear-gradient(180deg, var(--gold), var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .visitor-counter:hover {
+            opacity: 1;
+            transform: scale(1.05);
         }
 
         .counter-icon {
-            font-size: 1.5rem;
+            font-size: 0.9rem;
             color: var(--primary);
-            margin-right: 10px;
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .counter-number {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 0.85rem;
+            color: var(--gold);
+            opacity: 0.9;
+        }
+
+        .counter-label {
+            font-size: 0.65rem;
+            color: var(--silver);
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         /* Section Titles */
@@ -577,7 +582,7 @@
         /* Footer */
         .footer {
             text-align: center;
-            padding: 50px 20px;
+            padding: 50px 20px 100px;
             background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.8));
         }
 
@@ -610,34 +615,35 @@
         /* Scroll to top */
         .scroll-top {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary), var(--wine));
-            border: 2px solid var(--gold);
+            bottom: 80px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background: rgba(139, 0, 0, 0.5);
+            border: 1px solid rgba(255, 215, 0, 0.3);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--gold);
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             cursor: pointer;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
             z-index: 100;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
         }
 
         .scroll-top.visible {
-            opacity: 1;
+            opacity: 0.7;
             visibility: visible;
         }
 
         .scroll-top:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(220, 20, 60, 0.4);
+            opacity: 1;
+            transform: translateY(-3px);
+            background: rgba(139, 0, 0, 0.8);
         }
 
         /* Responsive */
@@ -717,15 +723,6 @@
         <span class="crown-icon">👑</span>
         <h1 class="main-title">Pombagiras</h1>
         <p class="subtitle">Rainhas da Esquerda</p>
-        
-        <!-- Visitor Counter -->
-        <div class="visitor-counter">
-            <div class="counter-label">Almas Conectadas</div>
-            <div>
-                <span class="counter-icon">🔥</span>
-                <span class="counter-number" id="visitorCount">...</span>
-            </div>
-        </div>
     </header>
 
     <!-- Impact Phrases -->
@@ -983,6 +980,13 @@
         <p class="footer-text" style="margin-top: 20px; font-size: 0.8rem;">© 2024-2026 | Todos os direitos reservados</p>
     </footer>
 
+    <!-- Discrete Visitor Counter - Fixed Bottom Right -->
+    <div class="visitor-counter" id="visitorCounter">
+        <span class="counter-icon">👁️</span>
+        <span class="counter-number" id="visitorCount">...</span>
+        <span class="counter-label">visitas</span>
+    </div>
+
     <!-- Scroll to Top -->
     <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
         <i class="fas fa-chevron-up"></i>
@@ -994,7 +998,7 @@
             SUPABASE_URL: 'https://rbygxkbewzknvjjhxdvw.supabase.co',
             SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJieWd4a2Jld3prbnZqamh4ZHZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMDcxNjQsImV4cCI6MjA4MTU4MzE2NH0.YrHF9HEGo6yv9MyNsPzFgBhaAB1DRh2SLU8f7L6s1nY',
             PAGE_NAME: 'pombagiras-app',
-            SESSION_KEY: 'pombagiras_session_viewed'
+            SESSION_KEY: 'pombagiras_session_2024'
         };
 
         // Loader
@@ -1035,89 +1039,110 @@
             }
         });
 
-        // Supabase Visit Counter
+        // ========== SUPABASE COUNTER - FIXED VERSION ==========
         async function initializeCounter() {
             const viewCountElement = document.getElementById('visitorCount');
             
             try {
-                // Check if already counted in this session
+                // Check if user already visited in this session
                 const hasViewed = sessionStorage.getItem(CONFIG.SESSION_KEY);
                 
-                if (!hasViewed) {
-                    // Increment view count using RPC
-                    const incrementResponse = await fetch(
-                        `${CONFIG.SUPABASE_URL}/rest/v1/rpc/increment_page_view`,
-                        {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'apikey': CONFIG.SUPABASE_KEY,
-                                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
-                            },
-                            body: JSON.stringify({ page_name: CONFIG.PAGE_NAME })
-                        }
-                    );
-                    
-                    if (incrementResponse.ok) {
-                        sessionStorage.setItem(CONFIG.SESSION_KEY, 'true');
-                    }
-                }
-                
-                // Get current view count
-                const response = await fetch(
-                    `${CONFIG.SUPABASE_URL}/rest/v1/page_views?page=eq.${CONFIG.PAGE_NAME}&select=view_count`,
+                // First, try to get current count
+                const getResponse = await fetch(
+                    `${CONFIG.SUPABASE_URL}/rest/v1/page_views?page=eq.${encodeURIComponent(CONFIG.PAGE_NAME)}&select=id,view_count`,
                     {
+                        method: 'GET',
                         headers: {
-                            'apikey': CONFIG.SUPABASE_KEY,
-                            'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
-                        }
-                    }
-                );
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data && data.length > 0) {
-                        animateCounter(viewCountElement, data[0].view_count);
-                    } else {
-                        // Create initial record if doesn't exist
-                        await createInitialRecord();
-                        viewCountElement.textContent = '1';
-                    }
-                } else {
-                    viewCountElement.textContent = '✨';
-                }
-            } catch (error) {
-                console.error('Counter error:', error);
-                viewCountElement.textContent = '✨';
-            }
-        }
-
-        async function createInitialRecord() {
-            try {
-                await fetch(
-                    `${CONFIG.SUPABASE_URL}/rest/v1/page_views`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
                             'apikey': CONFIG.SUPABASE_KEY,
                             'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
-                            'Prefer': 'return=minimal'
-                        },
-                        body: JSON.stringify({
-                            page: CONFIG.PAGE_NAME,
-                            view_count: 1
-                        })
+                            'Content-Type': 'application/json'
+                        }
                     }
                 );
+
+                let currentCount = 0;
+                let recordExists = false;
+                let recordId = null;
+
+                if (getResponse.ok) {
+                    const data = await getResponse.json();
+                    if (data && data.length > 0) {
+                        currentCount = data[0].view_count || 0;
+                        recordId = data[0].id;
+                        recordExists = true;
+                    }
+                }
+
+                // If this is a new session visit, increment the counter
+                if (!hasViewed) {
+                    const newCount = currentCount + 1;
+                    
+                    if (recordExists && recordId) {
+                        // Update existing record
+                        const updateResponse = await fetch(
+                            `${CONFIG.SUPABASE_URL}/rest/v1/page_views?id=eq.${recordId}`,
+                            {
+                                method: 'PATCH',
+                                headers: {
+                                    'apikey': CONFIG.SUPABASE_KEY,
+                                    'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
+                                    'Content-Type': 'application/json',
+                                    'Prefer': 'return=representation'
+                                },
+                                body: JSON.stringify({
+                                    view_count: newCount,
+                                    updated_at: new Date().toISOString()
+                                })
+                            }
+                        );
+                        
+                        if (updateResponse.ok) {
+                            currentCount = newCount;
+                            sessionStorage.setItem(CONFIG.SESSION_KEY, 'true');
+                        }
+                    } else {
+                        // Create new record
+                        const insertResponse = await fetch(
+                            `${CONFIG.SUPABASE_URL}/rest/v1/page_views`,
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'apikey': CONFIG.SUPABASE_KEY,
+                                    'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
+                                    'Content-Type': 'application/json',
+                                    'Prefer': 'return=representation'
+                                },
+                                body: JSON.stringify({
+                                    page: CONFIG.PAGE_NAME,
+                                    view_count: 1,
+                                    updated_at: new Date().toISOString()
+                                })
+                            }
+                        );
+                        
+                        if (insertResponse.ok) {
+                            currentCount = 1;
+                            sessionStorage.setItem(CONFIG.SESSION_KEY, 'true');
+                        }
+                    }
+                }
+
+                // Display the count with animation
+                if (currentCount > 0) {
+                    animateCounter(viewCountElement, currentCount);
+                } else {
+                    viewCountElement.textContent = '1';
+                }
+
             } catch (error) {
-                console.error('Error creating initial record:', error);
+                console.log('Counter info:', error.message);
+                viewCountElement.textContent = '∞';
             }
         }
 
         function animateCounter(element, targetNumber) {
-            const duration = 2000;
-            const steps = 60;
+            const duration = 1500;
+            const steps = 40;
             const stepValue = targetNumber / steps;
             let current = 0;
             
@@ -1133,11 +1158,18 @@
         }
 
         function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
             return num.toLocaleString('pt-BR');
         }
 
-        // Initialize counter
-        initializeCounter();
+        // Initialize counter when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(initializeCounter, 500);
+        });
 
         // Intersection Observer for animations
         const observerOptions = {
