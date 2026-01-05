@@ -570,8 +570,8 @@
 <body>
     <!-- Contador de acessos -->
     <div class="access-counter" id="accessCounter">
-        <span class="counter-icon">👁️</span>
-        <span>Acessos: <span class="counter-number" id="counterNumber">0</span></span>
+        <span class="counter-icon">🔥</span>
+        <span>Visitas: <span class="counter-number" id="counterNumber">0</span></span>
     </div>
 
     <!-- Partículas animadas -->
@@ -729,164 +729,126 @@
     </footer>
 
     <script>
-        // =============================================
-        // CONFIGURAÇÃO - MUDAR AQUI O ID DA PÁGINA
-        // =============================================
-        const PAGE_ID = 'divina'; // <-- MUDE AQUI! Ex: 'pombagira', 'home', etc.
-        // =============================================
+        // ============================================================================
+        // CONFIGURAÇÃO DO CONTADOR DE ACESSOS
+        // ============================================================================
         
-        const CONFIG = {
-            SUPABASE_URL: 'https://rbygxkbewzknvjjhxdvw.supabase.co',
-            SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJieWd4a2Jld3prbnZqamh4ZHZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMDcxNjQsImV4cCI6MjA4MTU4MzE2NH0.YrHF9HEGo6yv9MyNsPzFgBhaAB1DRh2SLU8f7L6s1nY',
-            PAGE_NAME: 'divina', // Usa o ID definido acima
-            SESSION_KEY: 'pombagira_session_' + 'divina' // Session única para cada página
+        // ATENÇÃO: A página precisa estar na tabela page_views do Supabase
+        // Use 'divina' como nome da página para esta aplicação específica
+        const SUPABASE_CONFIG = {
+            url: 'https://rbygxkbewzknyjhxdvw.supabase.co',
+            key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJieWd4a2Jld3prbnZqamh4ZHZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMDcxNjQsImV4cCI6MjA4MTU4MzE2NH0.YrHF9HEGo6yv9MyNsPzFgBhaAB1DRh2SLU8f7L6s1nY'
         };
 
-        // Elementos do contador
+        // Nome desta página específica na tabela 'page_views'
+        const PAGE_NAME = 'divina';
+        const SESSION_KEY = `visited_${PAGE_NAME}`;
+
+        // Elementos do DOM para o contador
         const counterElement = document.getElementById('counterNumber');
         const counterContainer = document.getElementById('accessCounter');
 
-        // Função para incrementar contador usando UPDATE direto
-        async function incrementViewCount() {
-            try {
-                // Primeiro busca o valor atual
-                const currentCount = await getCurrentCount();
-                if (currentCount === null) return false;
+        // ============================================================================
+        // FUNÇÕES DO CONTADOR DE ACESSOS
+        // ============================================================================
 
-                // Faz UPDATE incrementando 1
-                const response = await fetch(
-                    `${CONFIG.SUPABASE_URL}/rest/v1/page_views?page=eq.${CONFIG.PAGE_NAME}`,
-                    {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'apikey': CONFIG.SUPABASE_KEY,
-                            'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
-                        },
-                        body: JSON.stringify({
-                            count: currentCount + 1,
-                            updated_at: new Date().toISOString()
-                        })
-                    }
-                );
-
-                return response.ok;
-            } catch (error) {
-                console.error('Erro ao incrementar:', error);
-                return false;
-            }
-        }
-
-        // Função para obter a contagem atual
-        async function getCurrentCount() {
+        // Função para buscar a contagem atual do Supabase
+        async function fetchCurrentCount() {
             try {
                 const response = await fetch(
-                    `${CONFIG.SUPABASE_URL}/rest/v1/page_views?page=eq.${CONFIG.PAGE_NAME}&select=count`,
+                    `${SUPABASE_CONFIG.url}/rest/v1/page_views?page=eq.${PAGE_NAME}&select=view_count`,
                     {
                         headers: {
-                            'apikey': CONFIG.SUPABASE_KEY,
-                            'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
+                            'apikey': SUPABASE_CONFIG.key,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.key}`
                         }
                     }
                 );
-
+                
                 if (!response.ok) {
-                    console.error('Erro HTTP:', response.status);
-                    return null;
+                    console.warn('❌ Não foi possível buscar a contagem');
+                    return 0;
                 }
-
+                
                 const data = await response.json();
                 
                 if (data && data.length > 0) {
-                    return data[0].count;
+                    return data[0].view_count || 0;
                 } else {
-                    // Página não existe
+                    // Se a página não existe, retorna 0
                     return 0;
                 }
+                
             } catch (error) {
-                console.error('Erro ao buscar contagem:', error);
-                return null;
+                console.warn('⚠️ Contador offline, usando fallback');
+                return 0;
             }
         }
 
-        // Função para criar página se não existir
-        async function createPage() {
+        // Função para incrementar o contador no Supabase
+        async function incrementCounter() {
             try {
+                // Primeiro busca o valor atual
+                const currentCount = await fetchCurrentCount();
+                const newCount = currentCount + 1;
+                
+                // Faz o UPDATE no Supabase
                 const response = await fetch(
-                    `${CONFIG.SUPABASE_URL}/rest/v1/page_views`,
+                    `${SUPABASE_CONFIG.url}/rest/v1/page_views?page=eq.${PAGE_NAME}`,
                     {
-                        method: 'POST',
+                        method: 'PATCH',
                         headers: {
+                            'apikey': SUPABASE_CONFIG.key,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.key}`,
                             'Content-Type': 'application/json',
-                            'apikey': CONFIG.SUPABASE_KEY,
-                            'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
+                            'Prefer': 'return=representation'
                         },
                         body: JSON.stringify({
-                            page: CONFIG.PAGE_NAME,
-                            count: 1,
+                            view_count: newCount,
                             updated_at: new Date().toISOString()
                         })
                     }
                 );
-
+                
                 return response.ok;
+                
             } catch (error) {
-                console.error('Erro ao criar página:', error);
+                console.warn('⚠️ Erro ao incrementar contador');
                 return false;
             }
         }
 
-        // Função principal do contador
-        async function initViewCounter() {
+        // Função para criar uma nova entrada se a página não existir
+        async function createPageEntry() {
             try {
-                // Verifica se já visitou nesta sessão
-                const hasVisited = sessionStorage.getItem(CONFIG.SESSION_KEY);
-                
-                // Busca contagem atual
-                const currentCount = await getCurrentCount();
-                
-                if (currentCount === null) {
-                    // Erro na conexão
-                    counterElement.textContent = 'Erro';
-                    counterContainer.style.borderColor = 'rgba(220, 20, 60, 0.7)';
-                    return;
-                }
-
-                let finalCount = currentCount;
-
-                // Se página não existe, cria
-                if (currentCount === 0) {
-                    const created = await createPage();
-                    if (created) {
-                        finalCount = 1;
-                        sessionStorage.setItem(CONFIG.SESSION_KEY, 'true');
+                const response = await fetch(
+                    `${SUPABASE_CONFIG.url}/rest/v1/page_views`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'apikey': SUPABASE_CONFIG.key,
+                            'Authorization': `Bearer ${SUPABASE_CONFIG.key}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            page: PAGE_NAME,
+                            view_count: 1,
+                            updated_at: new Date().toISOString()
+                        })
                     }
-                } 
-                // Se página existe e é nova visita, incrementa
-                else if (!hasVisited) {
-                    const incremented = await incrementViewCount();
-                    if (incremented) {
-                        finalCount = currentCount + 1;
-                        sessionStorage.setItem(CONFIG.SESSION_KEY, 'true');
-                    }
-                }
-
-                // Atualiza display com animação
-                animateCounter(0, finalCount, counterElement);
-
+                );
+                
+                return response.ok;
+                
             } catch (error) {
-                console.error('Erro no contador:', error);
-                // Fallback: número aleatório para demonstração
-                const fallbackCount = Math.floor(Math.random() * 100) + 50;
-                animateCounter(0, fallbackCount, counterElement);
-                counterContainer.style.borderColor = 'rgba(255, 215, 0, 0.5)';
-                counterContainer.title = 'Modo offline - contagem estimada';
+                console.warn('⚠️ Erro ao criar página');
+                return false;
             }
         }
 
-        // Função para animar contagem
+        // Função para animar o contador (contagem regressiva visual)
         function animateCounter(start, end, element) {
-            const duration = 1200; // 1.2 segundos
+            const duration = 1500; // 1.5 segundos
             const steps = 60; // 60 fps
             const increment = (end - start) / steps;
             let current = start;
@@ -896,39 +858,112 @@
                 step++;
                 current = Math.min(start + (increment * step), end);
                 
-                // Formata o número
+                // Formata o número com separador de milhar
                 element.textContent = Math.floor(current).toLocaleString('pt-BR');
+                
+                // Efeito visual
+                element.style.transform = `scale(${1 + (step % 3 === 0 ? 0.1 : 0)})`;
                 
                 if (step >= steps || current >= end) {
                     clearInterval(timer);
                     element.textContent = end.toLocaleString('pt-BR');
+                    element.style.transform = 'scale(1)';
+                    
+                    // Efeito final
+                    setTimeout(() => {
+                        element.style.color = '#FF1493';
+                        setTimeout(() => {
+                            element.style.color = '';
+                        }, 300);
+                    }, 100);
                 }
             }, duration / steps);
         }
 
-        // Inicializar contador
+        // Função principal do contador
+        async function initializeCounter() {
+            try {
+                // Verifica se já visitou nesta sessão
+                const hasVisited = sessionStorage.getItem(SESSION_KEY);
+                
+                // Busca a contagem atual
+                let currentCount = await fetchCurrentCount();
+                
+                // Se não encontrou a página
+                if (currentCount === 0) {
+                    // Tenta criar a entrada
+                    const created = await createPageEntry();
+                    if (created) {
+                        currentCount = 1;
+                        sessionStorage.setItem(SESSION_KEY, 'true');
+                    }
+                } 
+                // Se encontrou e é uma nova visita
+                else if (!hasVisited) {
+                    const incremented = await incrementCounter();
+                    if (incremented) {
+                        currentCount += 1;
+                        sessionStorage.setItem(SESSION_KEY, 'true');
+                    }
+                }
+                
+                // Anima o contador
+                animateCounter(0, currentCount, counterElement);
+                
+            } catch (error) {
+                console.error('Erro no contador:', error);
+                // Fallback: número aleatório para demonstração
+                const fallbackCount = Math.floor(Math.random() * 100) + 50;
+                animateCounter(0, fallbackCount, counterElement);
+                
+                // Estilo de fallback
+                counterContainer.style.borderColor = 'rgba(139, 0, 139, 0.5)';
+                counterContainer.title = 'Modo offline - contagem estimada';
+            }
+        }
+
+        // ============================================================================
+        // INICIALIZAÇÃO
+        // ============================================================================
+        
+        // Inicializar contador quando a página carrega
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(initViewCounter, 500);
+            setTimeout(initializeCounter, 1000);
+            
+            // Adicionar efeitos de hover ao contador
+            if (counterContainer) {
+                counterContainer.addEventListener('mouseenter', () => {
+                    counterContainer.style.opacity = '1';
+                    counterContainer.style.transform = 'scale(1.05)';
+                    counterContainer.style.boxShadow = '0 0 20px rgba(255, 215, 0, 0.5)';
+                });
+                
+                counterContainer.addEventListener('mouseleave', () => {
+                    counterContainer.style.opacity = '0.8';
+                    counterContainer.style.transform = 'scale(1)';
+                    counterContainer.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.3)';
+                });
+            }
         });
 
-        // Atualizar contador a cada 60 segundos para mostrar mudanças em tempo real
+        // Atualizar contador a cada 60 segundos (para mostrar mudanças em tempo real)
         setInterval(async () => {
             try {
-                const currentCount = await getCurrentCount();
-                if (currentCount !== null) {
+                const currentCount = await fetchCurrentCount();
+                if (currentCount > 0) {
                     const currentDisplay = parseInt(counterElement.textContent.replace(/\D/g, '') || '0');
                     if (currentCount > currentDisplay) {
                         animateCounter(currentDisplay, currentCount, counterElement);
                     }
                 }
             } catch (error) {
-                console.log('Erro ao atualizar contador em tempo real:', error);
+                // Silencia erros nas atualizações periódicas
             }
         }, 60000);
 
-        // =============================================
-        // CÓDIGO ORIGINAL DO SITE (NÃO ALTERAR)
-        // =============================================
+        // ============================================================================
+        // CÓDIGO ORIGINAL DO SITE (NÃO ALTERADO)
+        // ============================================================================
         
         // Criar partículas animadas
         const particlesContainer = document.getElementById('particles');
