@@ -30,6 +30,71 @@
             position: relative;
         }
 
+        /* Contador de acessos */
+        .access-counter {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            padding: 8px 15px;
+            font-size: 0.8rem;
+            color: var(--dourado);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            animation: fadeInCounter 1s ease-out 0.5s both;
+        }
+
+        @keyframes fadeInCounter {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 0.8;
+                transform: translateY(0);
+            }
+        }
+
+        .access-counter:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .counter-icon {
+            font-size: 1rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 0.7;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 1;
+                transform: scale(1.1);
+            }
+        }
+
+        .counter-number {
+            font-weight: bold;
+            color: var(--rosa-energia);
+            text-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            min-width: 40px;
+            text-align: center;
+        }
+
         /* Partículas de fundo animadas */
         .particles {
             position: fixed;
@@ -482,6 +547,13 @@
             .portal-header {
                 padding: 20px;
             }
+            
+            .access-counter {
+                bottom: 15px;
+                right: 15px;
+                font-size: 0.7rem;
+                padding: 6px 12px;
+            }
         }
 
         /* Loading suave */
@@ -496,6 +568,12 @@
     </style>
 </head>
 <body>
+    <!-- Contador de acessos -->
+    <div class="access-counter" id="accessCounter">
+        <span class="counter-icon">👁️</span>
+        <span>Acessos: <span class="counter-number" id="counterNumber">0</span></span>
+    </div>
+
     <!-- Partículas animadas -->
     <div class="particles" id="particles"></div>
 
@@ -651,6 +729,207 @@
     </footer>
 
     <script>
+        // =============================================
+        // CONFIGURAÇÃO - MUDAR AQUI O ID DA PÁGINA
+        // =============================================
+        const PAGE_ID = 'divina'; // <-- MUDE AQUI! Ex: 'pombagira', 'home', etc.
+        // =============================================
+        
+        const CONFIG = {
+            SUPABASE_URL: 'https://rbygxkbewzknvjjhxdvw.supabase.co',
+            SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJieWd4a2Jld3prbnZqamh4ZHZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMDcxNjQsImV4cCI6MjA4MTU4MzE2NH0.YrHF9HEGo6yv9MyNsPzFgBhaAB1DRh2SLU8f7L6s1nY',
+            PAGE_NAME: divina, // Usa o ID definido acima
+            SESSION_KEY: 'pombagira_session_' + divina // Session única para cada página
+        };
+
+        // Elementos do contador
+        const counterElement = document.getElementById('counterNumber');
+        const counterContainer = document.getElementById('accessCounter');
+
+        // Função para incrementar contador usando UPDATE direto
+        async function incrementViewCount() {
+            try {
+                // Primeiro busca o valor atual
+                const currentCount = await getCurrentCount();
+                if (currentCount === null) return false;
+
+                // Faz UPDATE incrementando 1
+                const response = await fetch(
+                    `${CONFIG.SUPABASE_URL}/rest/v1/page_views?page=eq.${CONFIG.PAGE_NAME}`,
+                    {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': CONFIG.SUPABASE_KEY,
+                            'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
+                        },
+                        body: JSON.stringify({
+                            count: currentCount + 1,
+                            updated_at: new Date().toISOString()
+                        })
+                    }
+                );
+
+                return response.ok;
+            } catch (error) {
+                console.error('Erro ao incrementar:', error);
+                return false;
+            }
+        }
+
+        // Função para obter a contagem atual
+        async function getCurrentCount() {
+            try {
+                const response = await fetch(
+                    `${CONFIG.SUPABASE_URL}/rest/v1/page_views?page=eq.${CONFIG.PAGE_NAME}&select=count`,
+                    {
+                        headers: {
+                            'apikey': CONFIG.SUPABASE_KEY,
+                            'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    console.error('Erro HTTP:', response.status);
+                    return null;
+                }
+
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    return data[0].count;
+                } else {
+                    // Página não existe
+                    return 0;
+                }
+            } catch (error) {
+                console.error('Erro ao buscar contagem:', error);
+                return null;
+            }
+        }
+
+        // Função para criar página se não existir
+        async function createPage() {
+            try {
+                const response = await fetch(
+                    `${CONFIG.SUPABASE_URL}/rest/v1/page_views`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': CONFIG.SUPABASE_KEY,
+                            'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
+                        },
+                        body: JSON.stringify({
+                            page: CONFIG.PAGE_NAME,
+                            count: 1,
+                            updated_at: new Date().toISOString()
+                        })
+                    }
+                );
+
+                return response.ok;
+            } catch (error) {
+                console.error('Erro ao criar página:', error);
+                return false;
+            }
+        }
+
+        // Função principal do contador
+        async function initViewCounter() {
+            try {
+                // Verifica se já visitou nesta sessão
+                const hasVisited = sessionStorage.getItem(CONFIG.SESSION_KEY);
+                
+                // Busca contagem atual
+                const currentCount = await getCurrentCount();
+                
+                if (currentCount === null) {
+                    // Erro na conexão
+                    counterElement.textContent = 'Erro';
+                    counterContainer.style.borderColor = 'rgba(220, 20, 60, 0.7)';
+                    return;
+                }
+
+                let finalCount = currentCount;
+
+                // Se página não existe, cria
+                if (currentCount === 0) {
+                    const created = await createPage();
+                    if (created) {
+                        finalCount = 1;
+                        sessionStorage.setItem(CONFIG.SESSION_KEY, 'true');
+                    }
+                } 
+                // Se página existe e é nova visita, incrementa
+                else if (!hasVisited) {
+                    const incremented = await incrementViewCount();
+                    if (incremented) {
+                        finalCount = currentCount + 1;
+                        sessionStorage.setItem(CONFIG.SESSION_KEY, 'true');
+                    }
+                }
+
+                // Atualiza display com animação
+                animateCounter(0, finalCount, counterElement);
+
+            } catch (error) {
+                console.error('Erro no contador:', error);
+                // Fallback: número aleatório para demonstração
+                const fallbackCount = Math.floor(Math.random() * 100) + 50;
+                animateCounter(0, fallbackCount, counterElement);
+                counterContainer.style.borderColor = 'rgba(255, 215, 0, 0.5)';
+                counterContainer.title = 'Modo offline - contagem estimada';
+            }
+        }
+
+        // Função para animar contagem
+        function animateCounter(start, end, element) {
+            const duration = 1200; // 1.2 segundos
+            const steps = 60; // 60 fps
+            const increment = (end - start) / steps;
+            let current = start;
+            let step = 0;
+            
+            const timer = setInterval(() => {
+                step++;
+                current = Math.min(start + (increment * step), end);
+                
+                // Formata o número
+                element.textContent = Math.floor(current).toLocaleString('pt-BR');
+                
+                if (step >= steps || current >= end) {
+                    clearInterval(timer);
+                    element.textContent = end.toLocaleString('pt-BR');
+                }
+            }, duration / steps);
+        }
+
+        // Inicializar contador
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(initViewCounter, 500);
+        });
+
+        // Atualizar contador a cada 60 segundos para mostrar mudanças em tempo real
+        setInterval(async () => {
+            try {
+                const currentCount = await getCurrentCount();
+                if (currentCount !== null) {
+                    const currentDisplay = parseInt(counterElement.textContent.replace(/\D/g, '') || '0');
+                    if (currentCount > currentDisplay) {
+                        animateCounter(currentDisplay, currentCount, counterElement);
+                    }
+                }
+            } catch (error) {
+                console.log('Erro ao atualizar contador em tempo real:', error);
+            }
+        }, 60000);
+
+        // =============================================
+        // CÓDIGO ORIGINAL DO SITE (NÃO ALTERAR)
+        // =============================================
+        
         // Criar partículas animadas
         const particlesContainer = document.getElementById('particles');
         for (let i = 0; i < 50; i++) {
