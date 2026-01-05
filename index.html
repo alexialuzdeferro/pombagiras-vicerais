@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pombagiras - Portal Místico 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --vermelho-fogo: #DC143C;
+            --roxo-mistico: #8B008B;
+            --preto-profundo: #0a0a0a;
+            --dourado: #FFD700;
+            --rosa-energia: #FF1493;
+            --vinho: #8B0000;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--preto-profundo);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Partículas de fundo animadas */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--dourado);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.6; }
+            25% { transform: translateY(-30px) translateX(10px); opacity: 1; }
+            50% { transform: translateY(-60px) translateX(-10px); opacity: 0.4; }
+            75% { transform: translateY(-30px) translateX(15px); opacity: 1; }
+        }
+
+        /* Header místico */
+        .header {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(180deg, var(--preto-profundo) 0%, var(--vinho) 50%, var(--preto-profundo) 100%);
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, var(--vermelho-fogo) 0%, transparent 40%),
+                radial-gradient(circle at 80% 50%, var(--roxo-mistico) 0%, transparent 40%);
+            opacity: 0.3;
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+
+        .logo-container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .main-title {
+            font-size: clamp(2.5rem, 10vw, 4rem);
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--vermelho-fogo), var(--rosa-energia), var(--dourado));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            animation: glow 3s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(220, 20, 60, 0.5);
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: brightness(1) drop-shadow(0 0 20px var(--vermelho-fogo)); }
+            50% { filter: brightness(1.3) drop-shadow(0 0 40px var(--rosa-energia)); }
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            color: var(--dourado);
+            letter-spacing: 8px;
+            font-weight: 300;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 50px;
+            border: 2px solid var(--dourado);
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            padding-top: 8px;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator::before {
+            content: '';
+            width: 6px;
+            height: 10px;
+            background: var(--dourado);
+            border-radius: 3px;
+            animation: scroll 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        @keyframes scroll {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
+
+        /* Grade de imagens com efeito visceral */
+        .gallery-section {
+            position: relative;
+            padding: 60px 20px;
+            background: var(--preto-profundo);
+            z-index: 1;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 3/4;
+            overflow: hidden;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:nth-child(1) {
+            grid-column: 1 / 3;
+            aspect-ratio: 16/9;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+            filter: brightness(0.9) contrast(1.1);
+        }
+
+        .gallery-item:active {
+            transform: scale(0.95);
+        }
+
+        .gallery-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, var(--vermelho-fogo), transparent, var(--roxo-mistico));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+            mix-blend-mode: overlay;
+        }
+
+        .gallery-item:active::before {
+            opacity: 0.7;
+        }
+
+        .gallery-item:active img {
+            transform: scale(1.1);
+        }
+
+        /* Links especiais com animação de chama */
+        .links-section {
+            padding: 80px 20px;
+            background: linear-gradient(180deg, var(--preto-profundo), #1a0a0a, var(--preto-profundo));
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(2rem, 6vw, 3rem);
+            margin-bottom: 50px;
+            background: linear-gradient(90deg, var(--dourado), var(--vermelho-fogo), var(--dourado));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: 3px;
+        }
+
+        .links-container {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .link-card {
+            position: relative;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.1), rgba(139, 0, 139, 0.1));
+            border: 2px solid transparent;
+            border-radius: 25px;
+            text-decoration: none;
+            color: white;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .link-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--vermelho-fogo), var(--rosa-energia), var(--roxo-mistico), var(--dourado));
+            border-radius: 25px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            animation: borderRotate 3s linear infinite;
+        }
+
+        @keyframes borderRotate {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        .link-card:active::before {
+            opacity: 1;
+        }
+
+        .link-card:active {
+            transform: scale(0.98);
+            box-shadow: 0 0 40px var(--vermelho-fogo);
+        }
+
+        .link-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--dourado);
+        }
+
+        .link-description {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.4;
+        }
+
+        /* Cards expansíveis */
+        .portals-section {
+            padding: 80px 20px;
+            background: var(--preto-profundo);
+            position: relative;
+            z-index: 1;
+        }
+
+        .portal-card {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.2), rgba(139, 0, 139, 0.2));
+            border-radius: 30px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .portal-header {
+            padding: 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .portal-header h3 {
+            font-size: 1.5rem;
+            color: var(--dourado);
+            font-weight: 700;
+        }
+
+        .portal-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .portal-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .portal-content.active {
+            max-height: 2000px;
+        }
+
+        .portal-links {
+            padding: 0 25px 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .portal-link {
+            padding: 15px 20px;
+            background: rgba(220, 20, 60, 0.1);
+            border-radius: 15px;
+            text-decoration: none;
+            color: white;
+            border-left: 3px solid var(--vermelho-fogo);
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .portal-link:active {
+            background: rgba(220, 20, 60, 0.3);
+            transform: translateX(10px);
+            border-left-width: 6px;
+        }
+
+        /* Ênfase especial */
+        .special-section {
+            padding: 80px 20px;
+            background: linear-gradient(180deg, var(--preto-profundo), var(--vinho), var(--preto-profundo));
+            position: relative;
+            z-index: 1;
+        }
+
+        .special-cards {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .special-card {
+            position: relative;
+            padding: 30px;
+            background: rgba(10, 10, 10, 0.8);
+            border-radius: 30px;
+            border: 2px solid var(--dourado);
+            text-decoration: none;
+            color: white;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
+        }
+
+        .special-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .special-card:active::before {
+            left: 100%;
+        }
+
+        .special-card:active {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(220, 20, 60, 0.6);
+            border-color: var(--vermelho-fogo);
+        }
+
+        .special-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, var(--dourado), var(--vermelho-fogo));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .special-desc {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+
+        /* Footer místico */
+        .footer {
+            padding: 60px 20px;
+            text-align: center;
+            background: var(--preto-profundo);
+            border-top: 1px solid rgba(220, 20, 60, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-text {
+            color: var(--dourado);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .footer-symbol {
+            font-size: 2rem;
+            color: var(--vermelho-fogo);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsivo */
+        @media (max-width: 480px) {
+            .gallery-grid {
+                gap: 10px;
+            }
+            
+            .link-card {
+                padding: 20px;
+            }
+            
+            .portal-header {
+                padding: 20px;
+            }
+        }
+
+        /* Loading suave */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas animadas -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-container fade-in">
+            <h1 class="main-title">POMBAGIRAS</h1>
+            <p class="subtitle">PORTAL MÍSTICO</p>
+        </div>
+        <div class="scroll-indicator"></div>
+    </header>
+
+    <!-- Galeria de imagens -->
+    <section class="gallery-section">
+        <h2 class="section-title fade-in">ESSÊNCIA DIVINA</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item fade-in">
+                <img src="https://raw.githubusercontent.com/alexialuzdeferro/pombagira-revelada/refs/heads/main/Al%C3%AA%20(3).png" alt="Tatuagem no braço" loading="lazy">
+            </div>
+            <div class="gallery-item fade-in">
+                <img src="https://raw.githubusercontent.com/alexialuzdeferro/pombagira-revelada/refs/heads/main/Al%C3%AA%20(4).png" alt="Cabelo curto" loading="lazy">
+            </div>
+            <div class="gallery-item fade-in">
+                <img src="https://raw.githubusercontent.com/alexialuzdeferro/pombagira-revelada/refs/heads/main/Al%C3%AA%20(5).png" alt="Pombagira 4" loading="lazy">
+            </div>
+            <div class="gallery-item fade-in">
+                <img src="https://raw.githubusercontent.com/alexialuzdeferro/card-photos/refs/heads/main/ChatGPT%20Image%2023%20de%20dez.%20de%202025%2C%2013_54_19.png" alt="Pombagira 5" loading="lazy">
+            </div>
+            <div class="gallery-item fade-in">
+                <img src="https://raw.githubusercontent.com/alexialuzdeferro/pombagira-revelada/refs/heads/main/Al%C3%AA%20(8).png" alt="Pombagira 6" loading="lazy">
+            </div>
+        </div>
+    </section>
+
+    <!-- Ênfase especial -->
+    <section class="special-section">
+        <h2 class="section-title fade-in">PORTAL SAGRADO</h2>
+        <div class="special-cards">
+            <a href="https://bio.site/AlmasdePombagira" class="special-card fade-in" target="_blank">
+                <h3 class="special-title">🔥 ALMAS DE POMBAGIRA</h3>
+                <p class="special-desc">Portal central das almas, energias e mistérios das Pombagiras. Conexão direta com o sagrado feminino.</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- Portais expansíveis -->
+    <section class="portals-section">
+        <h2 class="section-title fade-in">CAMINHOS MÍSTICOS</h2>
+        
+        <div class="portal-card fade-in">
+            <div class="portal-header" onclick="togglePortal(this)">
+                <h3>🔮 GIRAS & RITUAIS</h3>
+                <span class="portal-icon">+</span>
+            </div>
+            <div class="portal-content">
+                <div class="portal-links">
+                    <a href="https://alexialuzdeferro.github.io/giras/" class="portal-link" target="_blank">Giras Completas</a>
+                    <a href="https://alexialuzdeferro.github.io/gira-completa/" class="portal-link" target="_blank">Gira Completa Expandida</a>
+                    <a href="https://alexialuzdeferro.github.io/misterio-das-giras/" class="portal-link" target="_blank">Mistério das Giras</a>
+                    <a href="https://alexialuzdeferro.github.io/PONTOS-CANTADOS/" class="portal-link" target="_blank">Pontos Cantados</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="portal-card fade-in">
+            <div class="portal-header" onclick="togglePortal(this)">
+                <h3>👑 AS 12 RAINHAS</h3>
+                <span class="portal-icon">+</span>
+            </div>
+            <div class="portal-content">
+                <div class="portal-links">
+                    <a href="https://alexialuzdeferro.github.io/12rainhas-pombagiras/" class="portal-link" target="_blank">12 Rainhas Pombagiras</a>
+                    <a href="https://alexialuzdeferro.github.io/12-oraculo/" class="portal-link" target="_blank">Oráculo das 12</a>
+                    <a href="https://alexialuzdeferro.github.io/minha-pombagira/" class="portal-link" target="_blank">Minha Pombagira</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="portal-card fade-in">
+            <div class="portal-header" onclick="togglePortal(this)">
+                <h3>🕯️ PRÁTICAS SAGRADAS</h3>
+                <span class="portal-icon">+</span>
+            </div>
+            <div class="portal-content">
+                <div class="portal-links">
+                    <a href="https://alexialuzdeferro.github.io/Velas-Virtuais/" class="portal-link" target="_blank">Velas Virtuais</a>
+                    <a href="https://alexialuzdeferro.github.io/medita-o/" class="portal-link" target="_blank">Meditação Guiada</a>
+                    <a href="https://alexialuzdeferro.github.io/meu-trabalho/" class="portal-link" target="_blank">Meu Trabalho Espiritual</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="portal-card fade-in">
+            <div class="portal-header" onclick="togglePortal(this)">
+                <h3>🌟 REVELAÇÕES</h3>
+                <span class="portal-icon">+</span>
+            </div>
+            <div class="portal-content">
+                <div class="portal-links">
+                    <a href="https://alexialuzdeferro.github.io/pombagira_revelada/" class="portal-link" target="_blank">Pombagira Revelada</a>
+                    <a href="https://alexialuzdeferro.github.io/chamas-libriana/" class="portal-link" target="_blank">Chamas Libriana</a>
+                    <a href="https://alexialuzdeferro.github.io/start/" class="portal-link" target="_blank">Start - Início da Jornada</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="portal-card fade-in">
+            <div class="portal-header" onclick="togglePortal(this)">
+                <h3>📸 GALERIAS VISUAIS</h3>
+                <span class="portal-icon">+</span>
+            </div>
+            <div class="portal-content">
+                <div class="portal-links">
+                    <a href="https://alexialuzdeferro.github.io/card-photos/" class="portal-link" target="_blank">Card Photos</a>
+                    <a href="https://alexialuzdeferro.github.io/visitas-card/" class="portal-link" target="_blank">Visitas Card</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="portal-card fade-in">
+            <div class="portal-header" onclick="togglePortal(this)">
+                <h3>🦇 DIMENSÕES ALTERNATIVAS</h3>
+                <span class="portal-icon">+</span>
+            </div>
+            <div class="portal-content">
+                <div class="portal-links">
+                    <a href="https://alexialuzdeferro.github.io/vampire-waves/" class="portal-link" target="_blank">Vampire Waves</a>
+                    <a href="https://alexialuzdeferro.github.io/dark-tv/" class="portal-link" target="_blank">Dark TV</a>
+                    <a href="https://alexialuzdeferro.github.io/melusine/" class="portal-link" target="_blank">Melusine</a>
+                    <a href="https://alexialuzdeferro.github.io/melusine_redes/" class="portal-link" target="_blank">Melusine Redes</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="portal-card fade-in">
+            <div class="portal-header" onclick="togglePortal(this)">
+                <h3>🏛️ CENTRAL</h3>
+                <span class="portal-icon">+</span>
+            </div>
+            <div class="portal-content">
+                <div class="portal-links">
+                    <a href="https://alexialuzdeferro.github.io/central-alexia/" class="portal-link" target="_blank">Central Alexia</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">O SAGRADO FEMININO EM CHAMAS</p>
+        <div class="footer-symbol">⭐</div>
+        <p class="footer-text" style="margin-top: 20px; font-size: 0.8rem; opacity: 0.6;">Portal Místico 2026</p>
+    </footer>
+
+    <script>
+        // Criar partículas animadas
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        // Função para expandir/colapsar portais
+        function togglePortal(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.portal-icon');
+            const isActive = content.classList.contains('active');
+            
+            // Fechar todos os outros portais
+            document.querySelectorAll('.portal-content').forEach(c => {
+                c.classList.remove('active');
+            });
+            document.querySelectorAll('.portal-icon').forEach(i => {
+                i.textContent = '+';
+                i.style.transform = 'rotate(0deg)';
+            });
+            
+            // Toggle do portal atual
+            if (!isActive) {
+                content.classList.add('active');
+                icon.textContent = '−';
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // Animação de fade-in ao scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Efeito parallax suave no header
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const header = document.querySelector('.header');
+            if (header && scrolled < window.innerHeight) {
+                header.style.transform = `translateY(${scrolled * 0.5}px)`;
+                header.style.opacity = 1 - (scrolled / window.innerHeight);
+            }
+        });
+
+        // Haptic feedback para dispositivos móveis (se disponível)
+        if ('vibrate' in navigator) {
+            document.querySelectorAll('.link-card, .special-card, .portal-link, .gallery-item').forEach(el => {
+                el.addEventListener('touchstart', () => {
+                    navigator.vibrate(10);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
